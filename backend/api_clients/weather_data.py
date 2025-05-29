@@ -5,11 +5,12 @@ import httpx
 import json
 import os
 from dotenv import load_dotenv
+from langchain.tools import tool
 
 load_dotenv()
-API_KEY = os.getenv("OPENWEATHER_API_KEY")
+OPEN_WEATHER_KEY = os.getenv("OPENWEATHER_API_KEY")
 
-async def get_weather(city):
+async def get_weather(city: str) -> str | None:
     """
     Fetches weather data from OpenWeatherMap API asynchronously.
 
@@ -20,7 +21,7 @@ async def get_weather(city):
         Weather data in JSON string format, or None if an error occurs.
     """
     base_url = "http://api.openweathermap.org/data/2.5/forecast"
-    params = {"q": city, "appid": API_KEY, "units": "metric"}
+    params = {"q": city, "appid": OPEN_WEATHER_KEY, "units": "metric"}
 
     async with httpx.AsyncClient() as client:
 
@@ -34,12 +35,7 @@ async def get_weather(city):
             print(f"HTTP Error: {e}")
             return None
 
-async def main():
-    city_name = "New York"
-
-    weather = await get_weather(city_name)
-
-    print(weather)
-
-if __name__ == "__main__":
-    asyncio.run(main())
+@tool
+def get_weather_data_of_city(city: str) -> str:
+    """Sync wrapper for the async function."""
+    return asyncio.run(get_weather(city))
