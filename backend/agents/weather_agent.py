@@ -18,9 +18,9 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 class WeatherAgent:
     """Create a weather agent."""
-    def __init__(self, city: str, begin_date: date, end_date: date):
+    def __init__(self, city_to_visit: str, begin_date: date, end_date: date):
         self.llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", api_key=GEMINI_API_KEY, temperature=0.5)
-        self.city = city
+        self.city_to_visit = city_to_visit
         self.begin_date = begin_date
         self.end_date = end_date
         self.system_prompt = WEATHER_AGENT_SYSTEM_PROMPT
@@ -34,7 +34,7 @@ class WeatherAgent:
         """Initialize the weather agent to get its response."""
         current_date = datetime.now().date()
         weather_request = (f"Today is {current_date}. "
-            f"Get weather forecast for {self.city} from {self.begin_date} to {self.end_date}. "
+            f"Get weather forecast for {self.city_to_visit} from {self.begin_date} to {self.end_date}. "
             f"Analyze the conditions and provide travel and packing recommendations.")
 
         messages = [

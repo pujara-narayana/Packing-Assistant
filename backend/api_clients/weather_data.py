@@ -10,18 +10,18 @@ from langchain.tools import tool
 load_dotenv()
 OPEN_WEATHER_KEY = os.getenv("OPENWEATHER_API_KEY")
 
-async def get_weather(city: str) -> str | None:
+async def get_weather(city_to_visit: str) -> str | None:
     """
     Fetches weather data from OpenWeatherMap API asynchronously.
 
     Args:
-        city (str): The city name.
+        city_to_visit (str): The city_to_visit name.
 
     Returns:
         Weather data in JSON string format, or None if an error occurs.
     """
     base_url = "http://api.openweathermap.org/data/2.5/forecast"
-    params = {"q": city, "appid": OPEN_WEATHER_KEY, "units": "metric"}
+    params = {"q": city_to_visit, "appid": OPEN_WEATHER_KEY, "units": "metric"}
 
     async with httpx.AsyncClient() as client:
 
