@@ -2,13 +2,13 @@
 
 import os
 from dotenv import load_dotenv
-from datetime import date
+from datetime import date, datetime
+from langchain_core.runnables import RunnableConfig
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage,SystemMessage
 from langchain_community.tools.tavily_search import TavilySearchResults
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.prebuilt import create_react_agent
-from datetime import datetime
 
 from backend.api_clients.weather_data import get_weather_data_of_city
 from backend.agents.prompts import WEATHER_AGENT_SYSTEM_PROMPT
@@ -30,7 +30,7 @@ class WeatherAgent:
         self.weather_agent = create_react_agent(self.llm, self.tools, checkpointer=self.memory)
         self.config = {"configurable": {"thread_id": "abc123"}}
 
-    def get_weather_data(self):
+    def get_weather_data(self) -> RunnableConfig | None:
         """Initialize the weather agent to get its response."""
         current_date = datetime.now().date()
         weather_request = (f"Today is {current_date}. "
@@ -48,12 +48,3 @@ class WeatherAgent:
             stream_mode="values"):
 
             step["messages"][-1].pretty_print()
-
-if __name__ == "__main__":
-
-    weather_agent = WeatherAgent(
-    "New York",
-    date(2025, 5, 29),
-    date(2025, 6, 3)
-    )
-    print(weather_agent.get_weather_data())
