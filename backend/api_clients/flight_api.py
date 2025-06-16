@@ -13,7 +13,7 @@ load_dotenv()
 AMADEUS_API_KEY = os.getenv("AMADEUS_API_KEY")
 AMADEUS_API_SECRET = os.getenv("AMADEUS_API_SECRET")
 
-class AmadeusAPI:
+class AmadeusFlightAPI:
     """Amadeus API client"""
     def __init__(self):
         self.api_key = AMADEUS_API_KEY
@@ -94,12 +94,12 @@ async def get_flight_data_async(origin: str, destination: str, departure_date: s
     Returns:
         Weather data in JSON string format, or raise an exception if an error occurs.
     """
-    amadeus = AmadeusAPI()
+    amadeus_flight = AmadeusFlightAPI()
     departure_date = datetime.strptime(departure_date, "%Y-%m-%d").date()
     return_date = datetime.strptime(return_date, "%Y-%m-%d").date()
 
     try:
-        data = await amadeus.search_flights(origin, destination, departure_date, return_date)
+        data = await amadeus_flight.search_flights(origin, destination, departure_date, return_date)
         return json.dumps(data, indent=2)
     except Exception as e:
         return f"Error: {str(e)}"
