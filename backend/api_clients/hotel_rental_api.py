@@ -1,6 +1,7 @@
 """Get hotel information from Amadeus API"""
 
 from datetime import date, datetime
+from typing import Any
 import asyncio
 import os
 from dotenv import load_dotenv
@@ -78,7 +79,7 @@ class AmadeusHotelAPI:
             hotel_ids = [hotel["hotelId"] for hotel in data.get("data", [])]
             return hotel_ids[:10]
 
-    async def get_hotel_offers(self, hotel_ids: list, check_in: date, check_out: date, adults: int = 1) -> dict:
+    async def get_hotel_offers(self, hotel_ids: list, check_in: date, check_out: date, adults: int = 1) -> dict[str, Any]:
         """
         Get hotel prices
 
@@ -179,4 +180,4 @@ async def get_hotel_data_async(city_code: str, check_in: str, check_out: str, ad
 @tool
 def get_hotel_data(city_code: str, check_in: str, check_out: str, adults: int = 1) -> str:
     """Sync wrapper for the async function."""
-    return asyncio.run(get_hotel_data_async(city_code, check_in, check_out, adults))
+    return asyncio.run(get_hotel_data_async(city_code, check_in, check_out, adults)) # london IATA code = "LON" and "LCY"
