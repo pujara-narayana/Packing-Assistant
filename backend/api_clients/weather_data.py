@@ -20,7 +20,7 @@ async def get_weather(city_to_visit: str) -> str | None:
     Returns:
         Weather data in JSON string format, or None if an error occurs.
     """
-    base_url = "http://api.openweathermap.org/data/2.5/forecast"
+    base_url = "https://api.openweathermap.org/data/2.5/forecast"
     params = {"q": city_to_visit, "appid": OPEN_WEATHER_KEY, "units": "metric"}
 
     async with httpx.AsyncClient() as client:
