@@ -31,14 +31,14 @@ async def get_place_id_of_city(full_city_to_visit_info: str) -> str | None:
         return data["features"][0]["properties"]["place_id"]
 
 
-async def get_activities_of_city(foodie: bool, adventure_or_fun: bool, relax_nature: bool, city_to_visit: str) -> str | None:
+async def get_activities_of_city(foodie: bool, adventure_or_fun: bool, business: bool, city_to_visit: str) -> str | None:
     """
     Fetches the activities to in a city from GeoAPIfy API asynchronously.
 
     Args:
         foodie (bool): Whether the user is a foodie.
         adventure_or_fun (bool): Whether the user wants to do adventure or fun.
-        relax_nature (bool): Whether the user wants to relax or enjoy nature.
+        business (bool): Whether the user wants to relax or enjoy nature.
         city_to_visit (str): The city_to_visit name with state and country.
 
     Returns:
@@ -51,7 +51,7 @@ async def get_activities_of_city(foodie: bool, adventure_or_fun: bool, relax_nat
     if foodie:
         get_activities_url = f"https://api.geoapify.com/v2/places?categories=catering.restaurant,catering.cafe&filter=place:{place_id}&limit=10&apiKey={GEOAPIFY_API_KEY}"
 
-    if relax_nature:
+    if business:
 
         get_activities_url = f"https://api.geoapify.com/v2/places?categories=leisure,natural,tourism,heritage,beach&filter=place:{place_id}&limit=10&apiKey={GEOAPIFY_API_KEY}"
 
@@ -71,7 +71,3 @@ async def get_activities_of_city(foodie: bool, adventure_or_fun: bool, relax_nat
 def get_activities_data_of_city_sync(foodie: bool, adventure_or_fun: bool, relax_nature: bool, city_to_visit: str) -> str:
     """Sync wrapper for the async function."""
     return asyncio.run(get_activities_of_city(foodie, adventure_or_fun, relax_nature, city_to_visit))
-
-if __name__ == "__main__":
-    result = asyncio.run(get_activities_of_city(True,False,False,"London United Kingdom"))
-    print(result)
