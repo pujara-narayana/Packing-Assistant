@@ -2,84 +2,54 @@
 
 from datetime import date, datetime
 import asyncio
-import os
-from dotenv import load_dotenv
 import httpx
 import json
 
 from langchain.tools import tool
 
-load_dotenv()
-AMADEUS_API_KEY = os.getenv("AMADEUS_API_KEY")
-AMADEUS_API_SECRET = os.getenv("AMADEUS_API_SECRET")
+from backend.api_clients.amadues_api_client import amadeus
 
-class AmadeusFlightAPI:
-    """Amadeus API client"""
-    def __init__(self):
-        self.api_key = AMADEUS_API_KEY
-        self.api_secret = AMADEUS_API_SECRET
-        self.token = None
-        self.base_url = "https://test.api.amadeus.com"
+async def search_flights(origin: str, destination: str, departure_date: date, return_date: date) -> str:
+    """Search for flights with authentication
 
-    async def get_access_token(self):
-        """Get OAuth2 access token"""
-        token_url = f"{self.base_url}/v1/security/oauth2/token"
+    Args:
+        origin: Airport code of the current location city_to_visit.
+        destination: Airport code of the destination location city_to_visit.
+        departure_date: Date "YYYY-MM-DD"
+        return_date: Date "YYYY-MM-DD"
 
-        data = {
-            "grant_type": "client_credentials",
-            "client_id": self.api_key,
-            "client_secret": self.api_secret
-        }
-        async with httpx.AsyncClient() as client:
-            response = await client.post(token_url, data=data)
-            if response.status_code == 200:
-                self.token = response.json()["access_token"]
-                return self.token
-            else:
-                raise Exception(f"Failed to get token: {response.text}")
+    Returns:
+        Weather data in JSON string format
+    """
+    if not amadeus.token:
+        await amadeus.get_access_token()
 
-    async def search_flights(self, origin: str, destination: str, departure_date: date, return_date: date) -> str:
-        """Search for flights with authentication
+    url = f"{amadeus.base_url}/v2/shopping/flight-offers"
 
-        Args:
-            origin: Airport code of the current location city_to_visit.
-            destination: Airport code of the destination location city_to_visit.
-            departure_date: Date "YYYY-MM-DD"
-            return_date: Date "YYYY-MM-DD"
-
-        Returns:
-            Weather data in JSON string format
-        """
-        if not self.token:
-            await self.get_access_token()
-
-        url = f"{self.base_url}/v2/shopping/flight-offers"
-
-        headers = {
-            "Authorization": f"Bearer {self.token}"
+    headers = {
+        "Authorization": f"Bearer {amadeus.token}"
         }
 
-        params = {
-            "originLocationCode": origin,
-            "destinationLocationCode": destination,
-            "departureDate": departure_date.strftime("%Y-%m-%d"),
-            "returnDate": return_date.strftime("%Y-%m-%d"),
-            "adults": 1,
-            "currencyCode": "USD",
-            "max": 5
-        }
+    params = {
+        "originLocationCode": origin,
+        "destinationLocationCode": destination,
+        "departureDate": departure_date.strftime("%Y-%m-%d"),
+        "returnDate": return_date.strftime("%Y-%m-%d"),
+        "adults": 1,
+        "currencyCode": "USD",
+        "max": 5
+    }
 
-        async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, headers=headers, params=params)
+
+        if response.status_code == 401:
+            await amadeus.get_access_token()
+            headers["Authorization"] = f"Bearer {amadeus.token}"
             response = await client.get(url, headers=headers, params=params)
 
-            if response.status_code == 401:
-                await self.get_access_token()
-                headers["Authorization"] = f"Bearer {self.token}"
-                response = await client.get(url, headers=headers, params=params)
-
-            response.raise_for_status()
-            return response.json()
-
+        response.raise_for_status()
+        return response.json()
 
 async def get_flight_data_async(origin: str, destination: str, departure_date: str, return_date: str) -> str:
     """
@@ -94,12 +64,11 @@ async def get_flight_data_async(origin: str, destination: str, departure_date: s
     Returns:
         Weather data in JSON string format, or raise an exception if an error occurs.
     """
-    amadeus_flight = AmadeusFlightAPI()
     departure_date = datetime.strptime(departure_date, "%Y-%m-%d").date()
     return_date = datetime.strptime(return_date, "%Y-%m-%d").date()
 
     try:
-        data = await amadeus_flight.search_flights(origin, destination, departure_date, return_date)
+        data = await search_flights(origin, destination, departure_date, return_date)
         return json.dumps(data, indent=2)
     except Exception as e:
         return f"Error: {str(e)}"
