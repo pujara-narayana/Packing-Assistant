@@ -3,124 +3,94 @@
 from datetime import date, datetime
 from typing import Any
 import asyncio
-import os
-from dotenv import load_dotenv
 import httpx
 import json
 
 from langchain.tools import tool
 
-load_dotenv()
-AMADEUS_API_KEY = os.getenv("AMADEUS_API_KEY")
-AMADEUS_API_SECRET = os.getenv("AMADEUS_API_SECRET")
+from backend.api_clients.amadues_api_client import amadeus
 
-class AmadeusHotelAPI:
-    """Amadeus API client for hotel searches"""
-    def __init__(self):
-        self.api_key = AMADEUS_API_KEY
-        self.api_secret = AMADEUS_API_SECRET
-        self.token = None
-        self.base_url = "https://test.api.amadeus.com"
 
-    async def get_access_token(self):
-        """Get OAuth2 access token"""
-        token_url = f"{self.base_url}/v1/security/oauth2/token"
+async def search_hotels_by_city(city_code: str) -> list[str]:
+    """ Get a list of hotels in the visiting city
 
-        data = {
-            "grant_type": "client_credentials",
-            "client_id": self.api_key,
-            "client_secret": self.api_secret
-        }
-        async with httpx.AsyncClient() as client:
-            response = await client.post(token_url, data=data)
-            if response.status_code == 200:
-                self.token = response.json()["access_token"]
-                return self.token
-            else:
-                raise Exception(f"Failed to get token: {response.text}")
+    Args:
+        city_code: IATA city code (e.g., "NYC", "BOS", "LAX")
 
-    async def search_hotels_by_city(self, city_code: str) -> list[str]:
-        """
-        Get a list of hotels in the visiting city
+    Returns:
+        List of hotel IDs
+    """
+    if not amadeus.token:
+        await amadeus.get_access_token()
 
-        Args:
-            city_code: IATA city code (e.g., "NYC", "BOS", "LAX")
+    url = f"{amadeus.base_url}/v1/reference-data/locations/hotels/by-city"
 
-        Returns:
-            List of hotel IDs
-        """
-        if not self.token:
-            await self.get_access_token()
-
-        url = f"{self.base_url}/v1/reference-data/locations/hotels/by-city"
-
-        headers = {
-            "Authorization": f"Bearer {self.token}"
+    headers = {
+            "Authorization": f"Bearer {amadeus.token}"
         }
 
-        params = {
-            "cityCode": city_code,
-            "radius": 15,  #kilometers
-            "radiusUnit": "KM",
-            "hotelSource": "ALL"
-        }
+    params = {
+        "cityCode": city_code,
+        "radius": 15,
+        "radiusUnit": "KM",
+        "hotelSource": "ALL"
+    }
 
-        async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, headers=headers, params=params)
+
+        if response.status_code == 401:
+            await amadeus.get_access_token()
+            headers["Authorization"] = f"Bearer {amadeus.token}"
             response = await client.get(url, headers=headers, params=params)
 
-            if response.status_code == 401:
-                await self.get_access_token()
-                headers["Authorization"] = f"Bearer {self.token}"
-                response = await client.get(url, headers=headers, params=params)
+        response.raise_for_status()
+        data = response.json()
 
-            response.raise_for_status()
-            data = response.json()
+        hotel_ids = [hotel["hotelId"] for hotel in data.get("data", [])]
+        return hotel_ids[:10]
 
-            hotel_ids = [hotel["hotelId"] for hotel in data.get("data", [])]
-            return hotel_ids[:10]
+async def get_hotel_offers(hotel_ids: list, check_in: date, check_out: date, adults: int = 1) -> dict[str, Any]:
+    """Get hotel prices
 
-    async def get_hotel_offers(self, hotel_ids: list, check_in: date, check_out: date, adults: int = 1) -> dict[str, Any]:
-        """
-        Get hotel prices
+    Args:
+        hotel_ids: List of hotel IDs
+        check_in: Check-in date
+        check_out: Check-out date
+        adults: Number of adults
 
-        Args:
-            hotel_ids: List of hotel IDs
-            check_in: Check-in date
-            check_out: Check-out date
-            adults: Number of adults
+    Returns:
+        Hotel prices
+    """
+    if not amadeus.token:
+        await amadeus.get_access_token()
 
-        Returns:
-            Hotel prices
-        """
-        if not self.token:
-            await self.get_access_token()
+    url = f"{amadeus.base_url}/v3/shopping/hotel-offers"
 
-        url = f"{self.base_url}/v3/shopping/hotel-offers"
+    headers = {
+        "Authorization": f"Bearer {amadeus.token}"
+    }
 
-        headers = {
-            "Authorization": f"Bearer {self.token}"
-        }
+    params = {
+        "hotelIds": ",".join(hotel_ids),
+        "checkInDate": check_in.strftime("%Y-%m-%d"),
+        "checkOutDate": check_out.strftime("%Y-%m-%d"),
+        "adults": adults,
+        "currency": "USD",
+        "roomQuantity": 1,
+        "bestRateOnly": True
+    }
 
-        params = {
-            "hotelIds": ",".join(hotel_ids),
-            "checkInDate": check_in.strftime("%Y-%m-%d"),
-            "checkOutDate": check_out.strftime("%Y-%m-%d"),
-            "adults": adults,
-            "currency": "USD",
-            "roomQuantity": 1,
-            "bestRateOnly": True
-        }
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, headers=headers, params=params)
 
-        async with httpx.AsyncClient() as client:
+        if response.status_code == 401:
+            await amadeus.get_access_token()
+            headers["Authorization"] = f"Bearer {amadeus.token}"
             response = await client.get(url, headers=headers, params=params)
 
-            if response.status_code == 401:
-                await self.get_access_token()
-                headers["Authorization"] = f"Bearer {self.token}"
-                response = await client.get(url, headers=headers, params=params)
-
-            response.raise_for_status()
-            return response.json()
+        response.raise_for_status()
+        return response.json()
 
 
 async def get_hotel_data_async(city_code: str, check_in: str, check_out: str, adults: int = 1) -> str:
@@ -136,17 +106,16 @@ async def get_hotel_data_async(city_code: str, check_in: str, check_out: str, ad
     Returns:
         JSON string with hotel options and prices
     """
-    amadeus_hotel = AmadeusHotelAPI()
     check_in_date = datetime.strptime(check_in, "%Y-%m-%d").date()
     check_out_date = datetime.strptime(check_out, "%Y-%m-%d").date()
 
     try:
-        hotel_ids = await amadeus_hotel.search_hotels_by_city(city_code)
+        hotel_ids = await search_hotels_by_city(city_code)
 
         if not hotel_ids:
             return json.dumps({"error": "No hotels found in this city"})
 
-        offers = await amadeus_hotel.get_hotel_offers(hotel_ids, check_in_date, check_out_date, adults)
+        offers = await get_hotel_offers(hotel_ids, check_in_date, check_out_date, adults)
 
         formatted_offers = []
         for offer in offers.get("data"):
