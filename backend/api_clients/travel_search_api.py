@@ -1,5 +1,4 @@
 """Get data from the Travel Search API"""
-
 import asyncio
 import httpx
 import json
@@ -28,7 +27,7 @@ async def get_place_id_of_city(full_city_to_visit_info: str) -> str | None:
         return data["features"][0]["properties"]["place_id"]
 
 
-async def get_activities_of_city(foodie: bool, adventure_or_fun: bool, business: bool, city_to_visit: str) -> str | None:
+async def get_activities_of_city(foodie: bool, business: bool, adventure_or_fun: bool, city_to_visit: str) -> str | None:
     """
     Fetches the activities to in a city from GeoAPIfy API asynchronously.
 
@@ -65,6 +64,6 @@ async def get_activities_of_city(foodie: bool, adventure_or_fun: bool, business:
 
 
 @tool
-def get_activities_data_of_city_sync(foodie: bool, adventure_or_fun: bool, relax_nature: bool, city_to_visit: str) -> str:
+def get_activities_data_of_city_sync(foodie: bool, business: bool ,adventure_or_fun: bool, city_to_visit: str) -> str:
     """Sync wrapper for the async function."""
-    return asyncio.run(get_activities_of_city(foodie, adventure_or_fun, relax_nature, city_to_visit))
+    return asyncio.run(get_activities_of_city(foodie, business, adventure_or_fun, city_to_visit))
