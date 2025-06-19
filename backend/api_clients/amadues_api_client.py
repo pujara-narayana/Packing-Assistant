@@ -1,13 +1,7 @@
 """Amadeus API client"""
 
-import os
-from dotenv import load_dotenv
 import httpx
-
-
-load_dotenv()
-AMADEUS_API_KEY = os.getenv("AMADEUS_API_KEY")
-AMADEUS_API_SECRET = os.getenv("AMADEUS_API_SECRET")
+from backend.api_key_load import AMADEUS_API_KEY, AMADEUS_API_SECRET
 
 class AmadeusApi:
     """Amadeus API client"""

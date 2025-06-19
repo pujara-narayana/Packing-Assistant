@@ -3,12 +3,9 @@
 import asyncio
 import httpx
 import json
-import os
-from dotenv import load_dotenv
 from langchain.tools import tool
 
-load_dotenv()
-OPEN_WEATHER_KEY = os.getenv("OPENWEATHER_API_KEY")
+from backend.api_key_load import OPEN_WEATHER_KEY
 
 async def get_weather(city_to_visit: str) -> str | None:
     """

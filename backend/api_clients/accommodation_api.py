@@ -3,14 +3,11 @@
 import asyncio
 import httpx
 import json
-import os
-from dotenv import load_dotenv
 from langchain.tools import tool
 
 from backend.api_clients.travel_search_api import get_place_id_of_city
+from backend.api_key_load import GEOAPIFY_API_KEY
 
-load_dotenv()
-GEOAPIFY_API_KEY = os.getenv("GEOAPIFY_API_KEY")
 
 async def get_accommodation_data(city_full_info: str) -> str:
     """Get accommodation data from the API.

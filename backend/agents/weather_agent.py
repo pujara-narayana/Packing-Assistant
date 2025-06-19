@@ -1,7 +1,5 @@
 """Agent that gets the weather data"""
 
-import os
-from dotenv import load_dotenv
 from datetime import date, datetime
 from langchain_core.runnables import RunnableConfig
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -12,9 +10,7 @@ from langgraph.prebuilt import create_react_agent
 
 from backend.api_clients.weather_data import get_weather_data_of_city
 from backend.agents.prompts import WEATHER_AGENT_SYSTEM_PROMPT
-
-load_dotenv()
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+from backend.api_key_load import GEMINI_API_KEY
 
 class WeatherAgent:
     """Create a weather agent."""

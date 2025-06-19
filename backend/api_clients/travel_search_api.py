@@ -3,12 +3,9 @@
 import asyncio
 import httpx
 import json
-import os
-from dotenv import load_dotenv
 from langchain.tools import tool
 
-load_dotenv()
-GEOAPIFY_API_KEY = os.getenv("GEOAPIFY_API_KEY")
+from backend.api_key_load import GEOAPIFY_API_KEY
 
 
 async def get_place_id_of_city(full_city_to_visit_info: str) -> str | None:
