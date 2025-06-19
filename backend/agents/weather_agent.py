@@ -38,9 +38,13 @@ class WeatherAgent:
             HumanMessage(content=weather_request)
         ]
 
+        response = ""
+
         for step in self.weather_agent.stream(
                 {"messages": messages},
             self.config,
             stream_mode="values"):
 
-            step["messages"][-1].pretty_print()
+            response = step["messages"][-1].pretty_print()
+
+        return response
