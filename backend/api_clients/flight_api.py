@@ -9,7 +9,7 @@ from langchain.tools import tool
 
 from backend.api_clients.amadues_api_client import amadeus
 
-async def search_flights(origin: str, destination: str, departure_date: date, return_date: date) -> str:
+async def search_flights(origin: str, destination: str, departure_date: date, return_date: date, adults: int = 1) -> str:
     """Search for flights with authentication
 
     Args:
@@ -17,6 +17,7 @@ async def search_flights(origin: str, destination: str, departure_date: date, re
         destination: Airport code of the destination location city_to_visit.
         departure_date: Date "YYYY-MM-DD"
         return_date: Date "YYYY-MM-DD"
+        adults: Number of adults (default: 1)
 
     Returns:
         Weather data in JSON string format
@@ -35,7 +36,7 @@ async def search_flights(origin: str, destination: str, departure_date: date, re
         "destinationLocationCode": destination,
         "departureDate": departure_date.strftime("%Y-%m-%d"),
         "returnDate": return_date.strftime("%Y-%m-%d"),
-        "adults": 1,
+        "adults": adults,
         "currencyCode": "USD",
         "max": 5
     }
@@ -51,7 +52,7 @@ async def search_flights(origin: str, destination: str, departure_date: date, re
         response.raise_for_status()
         return response.json()
 
-async def get_flight_data_async(origin: str, destination: str, departure_date: str, return_date: str) -> str:
+async def get_flight_data_async(origin: str, destination: str, departure_date: str, return_date: str, adults: int = 1) -> str:
     """
     Get flight offers from Amadeus API asynchronously.
 
@@ -60,6 +61,7 @@ async def get_flight_data_async(origin: str, destination: str, departure_date: s
         destination: Airport code of the destination location city_to_visit.
         departure_date: Date string "YYYY-MM-DD"
         return_date: Date string "YYYY-MM-DD"
+        adults: Number of adults (default: 1)
 
     Returns:
         Weather data in JSON string format, or raise an exception if an error occurs.
@@ -68,12 +70,12 @@ async def get_flight_data_async(origin: str, destination: str, departure_date: s
     return_date = datetime.strptime(return_date, "%Y-%m-%d").date()
 
     try:
-        data = await search_flights(origin, destination, departure_date, return_date)
+        data = await search_flights(origin, destination, departure_date, return_date, adults)
         return json.dumps(data, indent=2)
     except Exception as e:
         return f"Error: {str(e)}"
 
 @tool
-def get_flight_data(origin: str, destination: str, departure_date: str, return_date: str) -> str:
+def get_flight_data(origin: str, destination: str, departure_date: str, return_date: str, adults: int = 1) -> str:
     """Sync wrapper for the async function."""
-    return asyncio.run(get_flight_data_async(origin, destination, departure_date, return_date))
+    return asyncio.run(get_flight_data_async(origin, destination, departure_date, return_date, adults))
