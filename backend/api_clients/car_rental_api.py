@@ -20,7 +20,7 @@ async def get_car_rental_data(city_to_visit: str) -> str:
         """
 
     place_id = await get_place_id_of_city(city_to_visit)
-    get_car_rental_url = f"https://api.geoapify.com/v2/places?categories=rental.car&filter=place:{place_id}&limit=10&apiKey={GEOAPIFY_API_KEY}"
+    get_car_rental_url = f"https://api.geoapify.com/v2/places?categories=rental.car&filter=place:{place_id}&limit=5&apiKey={GEOAPIFY_API_KEY}"
     async with httpx.AsyncClient() as client:
         response = await client.get(get_car_rental_url)
         response.raise_for_status()

@@ -19,7 +19,7 @@ async def get_accommodation_data(city_full_info: str) -> str:
         json_data (str): JSON string with accommodation data but won't give prices of the accommodation.
         """
     place_id = await get_place_id_of_city(city_full_info)
-    get_accommodation_url = f"https://api.geoapify.com/v2/places?categories=accommodation.motel,accommodation,accommodation.hotel,accommodation.guest_house,accommodation.hostel&filter=place:{place_id}&limit=10&apiKey={GEOAPIFY_API_KEY}"
+    get_accommodation_url = f"https://api.geoapify.com/v2/places?categories=accommodation.motel,accommodation,accommodation.hotel,accommodation.guest_house,accommodation.hostel&filter=place:{place_id}&limit=5&apiKey={GEOAPIFY_API_KEY}"
     async with httpx.AsyncClient() as client:
         response = await client.get(get_accommodation_url)
         response.raise_for_status()
