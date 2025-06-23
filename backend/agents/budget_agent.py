@@ -5,7 +5,6 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage,SystemMessage
 from langchain_community.tools.tavily_search import TavilySearchResults
 from langgraph.checkpoint.memory import MemorySaver
-from langchain_community.agent_toolkits.load_tools import load_tools
 
 from langgraph.prebuilt import create_react_agent
 
@@ -28,9 +27,8 @@ class BudgetAgent:
         self.adults = adults
         self.tavily_search = TavilySearchResults()
         self.memory = MemorySaver()
-        self.extra_tools = load_tools(["wikipedia","llm-math"], llm=self.llm)
         self.system_prompt = BUDGET_AGENT_SYSTEM_PROMPT
-        self.tools = [get_flight_data, get_hotel_data, get_accommodation_data_of_city, get_car_rental_data_of_city, self.tavily_search, *self.extra_tools]
+        self.tools = [get_flight_data, get_hotel_data, get_accommodation_data_of_city, get_car_rental_data_of_city, self.tavily_search]
         self.config = {"configurable": {"thread_id": "abc123"}}
         self.budget_agent = create_react_agent(self.llm, self.tools, checkpointer=self.memory)
 
@@ -58,9 +56,3 @@ class BudgetAgent:
             response = step["messages"][-1].pretty_print()
 
         return response
-
-if __name__ == "__main__":
-    # Example usage
-    budget_agent = BudgetAgent(budget=1500, origin_city="New York", destination="Boston", start_date="2025-06-24", end_date="2025-06-28")
-    result = budget_agent.get_budget()
-    print(result)
