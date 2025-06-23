@@ -28,22 +28,22 @@ class SuggestionAgent:
 
     def get_activities_agently(self) -> RunnableConfig | None:
         """Initialize the suggestion agent to get its response."""
-        activities_request = ""
+        activities_prompt = ""
         if self.foodie:
-            activities_request = (f"I am visiting {self.city_to_visit} and I am a foodie type of person. I love to"
+            activities_prompt = (f"I am visiting {self.city_to_visit} and I am a foodie type of person. I love to"
                                   f" visit different restaurants and cafes. Can you suggest some good restaurants to visit in {self.city_to_visit}?")
         if self.business:
-            activities_request = (f"I am visiting {self.city_to_visit} for business purposes. "
+            activities_prompt = (f"I am visiting {self.city_to_visit} for business purposes. "
                                   f"Can you suggest some good places to visit in {self.city_to_visit} while I am free from work and conferences?")
 
         if self.entertainment:
-            activities_request = (f"I am visiting {self.city_to_visit} and my purpose is to have fun and enjoy. "
+            activities_prompt = (f"I am visiting {self.city_to_visit} and my purpose is to have fun and enjoy. "
                                   f"Can you suggest some good entertainment places to visit in {self.city_to_visit}?")
 
 
         messages = [
             SystemMessage(content=self.system_prompt),
-            HumanMessage(content=activities_request)
+            HumanMessage(content=activities_prompt)
         ]
 
         response = ""

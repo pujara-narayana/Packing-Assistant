@@ -29,13 +29,13 @@ class WeatherAgent:
     def get_weather_data(self) -> RunnableConfig | None:
         """Initialize the weather agent to get its response."""
         current_date = datetime.now().date()
-        weather_request = (f"Today is {current_date}. "
+        weather_prompt = (f"Today is {current_date}. "
             f"Get weather forecast for {self.city_to_visit} from {self.begin_date} to {self.end_date}. "
             f"Analyze the conditions and provide travel and packing recommendations.")
 
         messages = [
             SystemMessage(content=self.system_prompt),
-            HumanMessage(content=weather_request)
+            HumanMessage(content=weather_prompt)
         ]
 
         response = ""
