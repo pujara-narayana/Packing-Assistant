@@ -1,0 +1,1 @@
+"""Root entry point for the packing assistant backend"""
