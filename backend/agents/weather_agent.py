@@ -45,6 +45,7 @@ class WeatherAgent:
             self.config,
             stream_mode="values"):
 
-            response = step["messages"][-1].pretty_print()
+            if "messages" in step and step["messages"]:
+                response = step["messages"][-1].content
 
         return response
