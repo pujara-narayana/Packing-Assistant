@@ -26,12 +26,14 @@ class SuggestionAgent:
         self.tools = [get_activities_data_of_city_sync, self.tavily_search]
         self.suggestion_agent = create_react_agent(self.llm, self.tools, checkpointer=self.memory)
 
-    def get_activities_agently(self) -> RunnableConfig | None:
+    def get_activities_agently(self, weather_response: str) -> RunnableConfig | None:
         """Initialize the suggestion agent to get its response."""
+        self.system_prompt += f"\n\n---WEATHER DATA---\n{weather_response}\n---END WEATHER DATA---"
         activities_prompt = ""
         if self.foodie:
             activities_prompt = (f"I am visiting {self.city_to_visit} and I am a foodie type of person. I love to"
                                   f" visit different restaurants and cafes. Can you suggest some good restaurants to visit in {self.city_to_visit}?")
+
         if self.business:
             activities_prompt = (f"I am visiting {self.city_to_visit} for business purposes. "
                                   f"Can you suggest some good places to visit in {self.city_to_visit} while I am free from work and conferences?")
@@ -52,6 +54,7 @@ class SuggestionAgent:
                 self.config,
                 stream_mode="values"):
 
-            response = step["messages"][-1].pretty_print()
+            if "messages" in step and step["messages"]:
+                response = step["messages"][-1].content
 
         return response

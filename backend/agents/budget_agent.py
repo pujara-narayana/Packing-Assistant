@@ -33,9 +33,9 @@ class BudgetAgent:
         self.budget_agent = create_react_agent(self.llm, self.tools, checkpointer=self.memory)
 
 
-    def get_budget(self) -> RunnableConfig | None:
+    def get_budget(self, suggestion_response: str) -> RunnableConfig | None:
         """Initialize the budget agent to get its response."""
-
+        self.system_prompt += f"\n\n---SUGGESTIONS---\n{suggestion_response}\n---END SUGGESTIONS---"
         budget_prompt = (f"The number of people travelling is {self.adults}. I/We have a budget of {self.budget} USD. "
                          f"I/We are travelling from {self.origin_city} to {self.destination} from {self.start_date} to {self.end_date}. "
                          f"Can you calculate the estimated budget for flights, hotels, accommodation, car rentals and taxi/uber? "
@@ -53,6 +53,7 @@ class BudgetAgent:
                 self.config,
                 stream_mode="values"):
 
-            response = step["messages"][-1].pretty_print()
+            if "messages" in step and step["messages"]:
+                response = step["messages"][-1].content
 
         return response
