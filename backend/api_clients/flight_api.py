@@ -1,11 +1,8 @@
 """Get flight ticket information from API """
 
 from datetime import date, datetime
-import asyncio
 import httpx
 import json
-
-from langchain.tools import tool
 
 from backend.api_clients.amadues_api_client import amadeus
 
@@ -74,8 +71,3 @@ async def get_flight_data_async(origin: str, destination: str, departure_date: s
         return json.dumps(data, indent=2)
     except Exception as e:
         return f"Error: {str(e)}"
-
-@tool
-def get_flight_data(origin: str, destination: str, departure_date: str, return_date: str, adults: int = 1) -> str:
-    """Sync wrapper for the async function."""
-    return asyncio.run(get_flight_data_async(origin, destination, departure_date, return_date, adults))

@@ -1,9 +1,7 @@
 """Get accommodation data from the API."""
 
-import asyncio
 import httpx
 import json
-from langchain.tools import tool
 
 from backend.api_clients.travel_search_api import get_place_id_of_city
 from backend.api_key_load import GEOAPIFY_API_KEY
@@ -25,8 +23,3 @@ async def get_accommodation_data(city_full_info: str) -> str:
         response.raise_for_status()
         travel_data = response.json()
         return json.dumps(travel_data, indent=2)
-
-@tool
-def get_accommodation_data_of_city(city: str) -> str:
-    """Sync wrapper for the async function."""
-    return asyncio.run(get_accommodation_data(city))

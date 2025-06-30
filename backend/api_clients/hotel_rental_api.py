@@ -2,11 +2,8 @@
 
 from datetime import date, datetime
 from typing import Any
-import asyncio
 import httpx
 import json
-
-from langchain.tools import tool
 
 from backend.api_clients.amadues_api_client import amadeus
 
@@ -144,9 +141,3 @@ async def get_hotel_data_async(city_code: str, check_in: str, check_out: str, ad
 
     except Exception as e:
         return f"Error: {str(e)}"
-
-
-@tool
-def get_hotel_data(city_code: str, check_in: str, check_out: str, adults: int = 1) -> str:
-    """Sync wrapper for the async function."""
-    return asyncio.run(get_hotel_data_async(city_code, check_in, check_out, adults)) # london IATA code = "LON" and "LCY"

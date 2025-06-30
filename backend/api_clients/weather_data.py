@@ -1,9 +1,7 @@
 """Get necessary information regarding the weather."""
 
-import asyncio
 import httpx
 import json
-from langchain.tools import tool
 
 from backend.api_key_load import OPEN_WEATHER_KEY
 
@@ -31,8 +29,3 @@ async def get_weather(city_to_visit: str) -> str | None:
         except httpx.HTTPError as e:
             print(f"HTTP Error: {e}")
             return None
-
-@tool
-def get_weather_data_of_city(city: str) -> str:
-    """Sync wrapper for the async function."""
-    return asyncio.run(get_weather(city))

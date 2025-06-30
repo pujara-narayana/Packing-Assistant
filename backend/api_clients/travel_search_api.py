@@ -1,11 +1,9 @@
 """Get data from the Travel Search API"""
-import asyncio
+
 import httpx
 import json
-from langchain.tools import tool
 
 from backend.api_key_load import GEOAPIFY_API_KEY
-
 
 async def get_place_id_of_city(full_city_to_visit_info: str) -> str | None:
     """
@@ -61,9 +59,3 @@ async def get_activities_of_city(foodie: bool, business: bool, adventure_or_fun:
         response.raise_for_status()
         travel_data = response.json()
         return json.dumps(travel_data, indent=2)
-
-
-@tool
-def get_activities_data_of_city_sync(foodie: bool, business: bool ,adventure_or_fun: bool, city_to_visit: str) -> str:
-    """Sync wrapper for the async function."""
-    return asyncio.run(get_activities_of_city(foodie, business, adventure_or_fun, city_to_visit))
