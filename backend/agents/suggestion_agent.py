@@ -4,10 +4,9 @@ from langchain_core.runnables import RunnableConfig
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage,SystemMessage
 from langchain_community.tools.tavily_search import TavilySearchResults
-from langgraph.checkpoint.memory import MemorySaver
 from langgraph.prebuilt import create_react_agent
 
-from backend.api_clients.travel_search_api import get_activities_data_of_city_sync
+from backend.intents.rest_agent_intents import get_activities_data_of_city_sync
 from backend.agents.prompts import SUGGESTION_AGENT_SYSTEM_PROMPT
 from backend.api_key_load import GEMINI_API_KEY
 
@@ -21,10 +20,8 @@ class SuggestionAgent:
         self.business = business
         self.system_prompt = SUGGESTION_AGENT_SYSTEM_PROMPT
         self.tavily_search = TavilySearchResults()
-        self.memory = MemorySaver()
-        self.config = {"configurable": {"thread_id": "abc123"}}
         self.tools = [get_activities_data_of_city_sync, self.tavily_search]
-        self.suggestion_agent = create_react_agent(self.llm, self.tools, checkpointer=self.memory)
+        self.suggestion_agent = create_react_agent(self.llm, self.tools)
 
     def get_activities_agently(self, weather_response: str) -> RunnableConfig | None:
         """Initialize the suggestion agent to get its response."""
@@ -49,10 +46,7 @@ class SuggestionAgent:
         ]
 
         response = ""
-        for step in self.suggestion_agent.stream(
-                {"messages": messages},
-                self.config,
-                stream_mode="values"):
+        for step in self.suggestion_agent.stream({"messages": messages}):
 
             if "messages" in step and step["messages"]:
                 response = step["messages"][-1].content

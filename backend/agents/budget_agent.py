@@ -4,15 +4,11 @@ from langchain_core.runnables import RunnableConfig
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage,SystemMessage
 from langchain_community.tools.tavily_search import TavilySearchResults
-from langgraph.checkpoint.memory import MemorySaver
 
 from langgraph.prebuilt import create_react_agent
 
 from backend.api_key_load import GEMINI_API_KEY
-from backend.api_clients.flight_api import get_flight_data
-from backend.api_clients.hotel_rental_api import get_hotel_data
-from backend.api_clients.accommodation_api import get_accommodation_data_of_city
-from backend.api_clients.car_rental_api import get_car_rental_data_of_city
+from backend.intents.rest_agent_intents import get_flight_data, get_hotel_data, get_accommodation_data_of_city, get_car_rental_data_of_city
 from backend.agents.prompts import BUDGET_AGENT_SYSTEM_PROMPT
 
 class BudgetAgent:
@@ -26,11 +22,9 @@ class BudgetAgent:
         self.end_date = end_date
         self.adults = adults
         self.tavily_search = TavilySearchResults()
-        self.memory = MemorySaver()
         self.system_prompt = BUDGET_AGENT_SYSTEM_PROMPT
         self.tools = [get_flight_data, get_hotel_data, get_accommodation_data_of_city, get_car_rental_data_of_city, self.tavily_search]
-        self.config = {"configurable": {"thread_id": "abc123"}}
-        self.budget_agent = create_react_agent(self.llm, self.tools, checkpointer=self.memory)
+        self.budget_agent = create_react_agent(self.llm, self.tools)
 
 
     def get_budget(self, suggestion_response: str) -> RunnableConfig | None:
@@ -48,10 +42,7 @@ class BudgetAgent:
 
         response = ""
 
-        for step in self.budget_agent.stream(
-                {"messages": messages},
-                self.config,
-                stream_mode="values"):
+        for step in self.budget_agent.stream({"messages": messages}):
 
             if "messages" in step and step["messages"]:
                 response = step["messages"][-1].content
