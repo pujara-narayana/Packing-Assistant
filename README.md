@@ -24,3 +24,5 @@ The LLM will respond with -
 * Suggest uber or car rentals
 * Suggest shopping store
 * Use Google Maps for increasing interactiveness with the user.
+
+![Program workflow](/Users/narayanapujara/Projects/packing_assistant_workflow.png)
