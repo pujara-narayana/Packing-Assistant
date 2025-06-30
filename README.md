@@ -18,10 +18,10 @@ The LLM will respond with -
 * Suggest places to visit for each day
 * What type of clothes to wear and how much to pack 
 * Famous restaurants and hotels, and Airbnb [budget accordingly]
-* Different activities to do there based on user’s input
+* Different activities to do there based on the user’s input
 * Give an opinion, is it a good time to visit or not? #
 * Give an estimated budget based on the user’s input
 * Suggest Uber or car rentals
 * Use Google Maps to increase interactiveness with the user.
 
-![packing_assistant_workflow](https://github.com/user-attachments/assets/d8dc64e1-7e8b-41ff-8311-d2f4949790ac)
+![packing_assistant](https://github.com/user-attachments/assets/4cda27cf-364b-4243-a154-5506d4873c1e)
