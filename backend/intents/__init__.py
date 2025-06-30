@@ -1,0 +1,1 @@
+"""The Intents module provides tools for handling various intents related to travel planning, such as weather information, activity suggestions, and budget analysis."""
