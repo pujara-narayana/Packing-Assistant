@@ -10,11 +10,11 @@ from langgraph.checkpoint.memory import MemorySaver
 from langgraph.prebuilt import ToolNode
 from langgraph.graph.state import CompiledStateGraph
 
-from langchain_groq import ChatGroq
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_community.tools.tavily_search import TavilySearchResults
 
 from datetime import date
-from backend.api_key_load import GROQ_API_KEY
+from backend.api_key_load import GEMINI_PRO_API_KEY
 from backend.agents.weather_agent import WeatherAgent
 from backend.agents.suggestion_agent import SuggestionAgent
 from backend.agents.budget_agent import BudgetAgent
@@ -43,9 +43,9 @@ class TravelPlanningState(TypedDict):
 
 class PackingAgent:
     def __init__(self):
-        self.llm = ChatGroq(
-            model="llama-3.3-70b-versatile",
-            api_key=GROQ_API_KEY,
+        self.llm = ChatGoogleGenerativeAI(
+            model="gemini-2.5-pro",
+            api_key=GEMINI_PRO_API_KEY,
             temperature=0.5
         )
         self.memory = MemorySaver()
