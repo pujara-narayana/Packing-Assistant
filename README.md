@@ -25,3 +25,66 @@ The LLM will respond with -
 * Use Google Maps to increase interactiveness with the user.
 
 ![packing_assistant](https://github.com/user-attachments/assets/4cda27cf-364b-4243-a154-5506d4873c1e)
+
+
+## Installation
+
+### Prerequisites
+
+- Python 3.10 or higher
+- [uv](https://github.com/astral-sh/uv) package manager
+
+### Setup Instructions
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/pujara-narayana/Packing-Assistant.git
+   cd packing-assistant
+   ```
+
+2. **Install uv (if not already installed)**
+   ```bash
+   # On macOS/Linux
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   
+   # On Windows
+   powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+   ```
+
+3. **Create and activate virtual environment**
+   ```bash
+   uv venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   ```
+4. **Install dependencies**
+   ```bash
+   uv sync
+   ```
+
+5. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   # Edit .env file with your API keys and configuration
+   ```
+
+6. **Install development dependencies (optional)**
+   ```bash
+   uv sync --extra dev
+   ```
+NOTE: If you are using Pycharm, you can set the interpreter to the virtual environment created by uv.
+
+
+### Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+* OPENWEATHER_API_KEY:
+* TAVILY_API_KEY:
+* GEMINI_API_KEY:
+* AMADEUS_API_KEY:
+* AMADEUS_API_SECRET: 
+* GEOAPIFY_API_KEY:
+* GEMINI_PRO_API_KEY:
+
+All the above API keys can be obtained from their respective websites and are free of cost. Only fot GEMINI_PRO_API_KEY, you need to make an account on Google Cloud Platform and get the API key.
+
