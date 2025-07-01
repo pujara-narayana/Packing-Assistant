@@ -86,5 +86,5 @@ Create a `.env` file in the root directory with the following variables:
 * GEOAPIFY_API_KEY:
 * GEMINI_PRO_API_KEY:
 
-All the above API keys can be obtained from their respective websites and are free of cost. Only fot GEMINI_PRO_API_KEY, you need to make an account on Google Cloud Platform and get the API key.
+All the above API keys can be obtained from their respective websites and are free of cost. Only for GEMINI_PRO_API_KEY, you need to make an account on Google Cloud Platform and get the API key.
 
