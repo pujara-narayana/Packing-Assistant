@@ -11,7 +11,7 @@ from langgraph.prebuilt import ToolNode
 from langgraph.graph.state import CompiledStateGraph
 
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_community.tools.tavily_search import TavilySearchResults
+from langchain_tavily import TavilySearch
 
 from datetime import date
 from backend.api_key_load import GEMINI_PRO_API_KEY
@@ -49,7 +49,7 @@ class PackingAgent:
             temperature=0.5
         )
         self.memory = MemorySaver()
-        self.tavily_search = TavilySearchResults()
+        self.tavily_search = TavilySearch()
         self.system_prompt = PACKING_AGENT_SYSTEM_PROMPT
         self.tools = [weather_tool, suggestion_tool, budget_tool, self.tavily_search]
 

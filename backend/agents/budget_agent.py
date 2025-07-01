@@ -3,7 +3,7 @@
 from langchain_core.runnables import RunnableConfig
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage,SystemMessage
-from langchain_community.tools.tavily_search import TavilySearchResults
+from langchain_tavily import TavilySearch
 
 from langgraph.prebuilt import create_react_agent
 
@@ -21,7 +21,7 @@ class BudgetAgent:
         self.start_date = start_date
         self.end_date = end_date
         self.adults = adults
-        self.tavily_search = TavilySearchResults()
+        self.tavily_search = TavilySearch()
         self.system_prompt = BUDGET_AGENT_SYSTEM_PROMPT
         self.tools = [get_flight_data, get_hotel_data, get_accommodation_data_of_city, get_car_rental_data_of_city, self.tavily_search]
         self.budget_agent = create_react_agent(self.llm, self.tools)

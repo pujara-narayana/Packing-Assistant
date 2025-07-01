@@ -3,7 +3,7 @@
 from langchain_core.runnables import RunnableConfig
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage,SystemMessage
-from langchain_community.tools.tavily_search import TavilySearchResults
+from langchain_tavily import TavilySearch
 from langgraph.prebuilt import create_react_agent
 
 from backend.intents.rest_agent_intents import get_activities_data_of_city_sync
@@ -19,7 +19,7 @@ class SuggestionAgent:
         self.entertainment = entertainment
         self.business = business
         self.system_prompt = SUGGESTION_AGENT_SYSTEM_PROMPT
-        self.tavily_search = TavilySearchResults()
+        self.tavily_search = TavilySearch()
         self.tools = [get_activities_data_of_city_sync, self.tavily_search]
         self.suggestion_agent = create_react_agent(self.llm, self.tools)
 
