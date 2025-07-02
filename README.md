@@ -73,6 +73,7 @@ The LLM will respond with -
    ```
 NOTE: If you are using Pycharm, you can set the interpreter to the virtual environment created by uv.
 
+Another Note: I have commented out the main function in packing_agent.py if you want to run the program in your IDE's console please uncomment it and run the file.
 
 ### Environment Variables
 
@@ -87,4 +88,3 @@ Create a `.env` file in the root directory with the following variables:
 * GEMINI_PRO_API_KEY:
 
 All the above API keys can be obtained from their respective websites and are free of cost. Only for GEMINI_PRO_API_KEY, you need to make an account on Google Cloud Platform and get the API key.
-
