@@ -1,6 +1,6 @@
 """Agent that will communicate with other agents and will make the itinerary for the user."""
 
-import uuid
+# import uuid
 from typing import TypedDict, Annotated, List, Dict, Any
 from operator import add
 
@@ -207,70 +207,70 @@ Please create a detailed day-by-day itinerary with packing recommendations."""
             return {"messages": [error_response]}
 
 # The below function is just for running the agent in a console-like environment.
-
-    def run(self):
-        thread_id = str(uuid.uuid4())
-        config = {"configurable": {"thread_id": thread_id}}
-
-        print("--- Welcome to the Two-Phase AI Travel Planner ---")
-        print("--- Phase 1: Initial Plan Creation (Required) ---")
-
-        try:
-            initial_data = {
-                "origin_city": input("Enter your origin city: "),
-                "destination": input("Enter your destination city: "),
-                "start_date": input("Enter trip start date (YYYY-MM-DD): "),
-                "end_date": input("Enter trip end date (YYYY-MM-DD): "),
-                "adults": int(input("Enter number of adults: ")),
-                "budget": int(input("Enter your budget in USD: ")),
-                "foodie": "y" in input("Are you a foodie? (y/n): ").lower(),
-                "entertainment": "y" in input("Interested in entertainment? (y/n): ").lower(),
-                "business": "y" in input("Is this a business trip? (y/n): ").lower(),
-                "initial_plan_complete": False,
-                "messages": [],
-            }
-        except ValueError:
-            print("Invalid input. Please enter numbers for adults and budget. Exiting.")
-            return
-
-        print("\n--- Generating your initial itinerary... ---")
-        try:
-            result_phase1 = self.graph.invoke(initial_data, config=config)
-
-            print("\n\n--- YOUR PERSONALIZED TRAVEL ITINERARY ---")
-            print(result_phase1.get('final_itinerary', 'Error: Could not generate itinerary'))
-            print("-" * 50)
-
-            print("\n--- Phase 2: Follow-up Chat ---")
-            print("You can now ask follow-up questions. Type 'quit' to exit.")
-
-            while True:
-                user_input = input("You: ")
-                if user_input.lower() == 'quit':
-                    break
-
-                try:
-                    follow_up_result = self.graph.invoke(
-                        {"messages": [HumanMessage(content=user_input)]},
-                        config=config
-                    )
-
-                    messages = follow_up_result.get("messages", [])
-                    if messages:
-                        ai_message = messages[-1].content
-                        print(f"\nAI Planner: {ai_message}\n")
-                    else:
-                        print("\nAI Planner: I didn't understand that. Could you please rephrase?\n")
-
-                except Exception as e:
-                    print(f"\nError during chat: {str(e)}")
-                    print("Please try again.\n")
-
-        except Exception as e:
-            print(f"Error during phase 1: {str(e)}")
-            print("Please check your inputs and try again.")
-
-
-if __name__ == '__main__':
-    agent = PackingAgent()
-    agent.run()
+#
+#     def run(self):
+#         thread_id = str(uuid.uuid4())
+#         config = {"configurable": {"thread_id": thread_id}}
+#
+#         print("--- Welcome to the Two-Phase AI Travel Planner ---")
+#         print("--- Phase 1: Initial Plan Creation (Required) ---")
+#
+#         try:
+#             initial_data = {
+#                 "origin_city": input("Enter your origin city: "),
+#                 "destination": input("Enter your destination city: "),
+#                 "start_date": input("Enter trip start date (YYYY-MM-DD): "),
+#                 "end_date": input("Enter trip end date (YYYY-MM-DD): "),
+#                 "adults": int(input("Enter number of adults: ")),
+#                 "budget": int(input("Enter your budget in USD: ")),
+#                 "foodie": "y" in input("Are you a foodie? (y/n): ").lower(),
+#                 "entertainment": "y" in input("Interested in entertainment? (y/n): ").lower(),
+#                 "business": "y" in input("Is this a business trip? (y/n): ").lower(),
+#                 "initial_plan_complete": False,
+#                 "messages": [],
+#             }
+#         except ValueError:
+#             print("Invalid input. Please enter numbers for adults and budget. Exiting.")
+#             return
+#
+#         print("\n--- Generating your initial itinerary... ---")
+#         try:
+#             result_phase1 = self.graph.invoke(initial_data, config=config)
+#
+#             print("\n\n--- YOUR PERSONALIZED TRAVEL ITINERARY ---")
+#             print(result_phase1.get('final_itinerary', 'Error: Could not generate itinerary'))
+#             print("-" * 50)
+#
+#             print("\n--- Phase 2: Follow-up Chat ---")
+#             print("You can now ask follow-up questions. Type 'quit' to exit.")
+#
+#             while True:
+#                 user_input = input("You: ")
+#                 if user_input.lower() == 'quit':
+#                     break
+#
+#                 try:
+#                     follow_up_result = self.graph.invoke(
+#                         {"messages": [HumanMessage(content=user_input)]},
+#                         config=config
+#                     )
+#
+#                     messages = follow_up_result.get("messages", [])
+#                     if messages:
+#                         ai_message = messages[-1].content
+#                         print(f"\nAI Planner: {ai_message}\n")
+#                     else:
+#                         print("\nAI Planner: I didn't understand that. Could you please rephrase?\n")
+#
+#                 except Exception as e:
+#                     print(f"\nError during chat: {str(e)}")
+#                     print("Please try again.\n")
+#
+#         except Exception as e:
+#             print(f"Error during phase 1: {str(e)}")
+#             print("Please check your inputs and try again.")
+#
+#
+# if __name__ == '__main__':
+#     agent = PackingAgent()
+#     agent.run()
